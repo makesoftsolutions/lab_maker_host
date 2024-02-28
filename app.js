@@ -299,7 +299,7 @@ function removeMonitor(id){
 
 function removeGrade(id){
 
-  const apiUrl = getUrl + '/gradesRemove';
+  const apiUrl = getUrl() + '/gradesRemove';
   const data = {"_id":id}
 
   axios.post(apiUrl, data)
