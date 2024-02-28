@@ -1,0 +1,240 @@
+body {
+    font-family: 'Arial', sans-serif;
+    padding: 20px;
+    background-color: #f4f4f4;
+    text-align: center;
+  }
+  
+  h1 {
+    color: #333;
+  }
+
+  h2{
+    font-weight: normal;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  form {
+    width: 400px;
+    max-width: 400px;
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+  }
+  
+  .list-container {
+    max-width: 400px;
+    min-width: 250px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    overflow-y: auto;
+  }
+
+  .list-display{
+    width:100%
+    
+  }
+  
+  .label-container {
+    max-width: 400px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  input, button, #gradeReference {
+    margin-bottom: 20px;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+    background-color: white;
+  }
+  
+  button {
+    background-color: #4caf50;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  .list-container {
+    max-width: 100%;
+    flex: 1;
+  }
+  
+  .list-container div {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #e0f7fa;
+    box-sizing: border-box;
+  }
+  
+  .popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: none;
+    width: 60%;
+    max-width: 600px;
+    padding: none;
+    border: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+  }
+  
+  
+  .popup-content {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    padding: 40px;
+    text-align: center;
+    color: #333;
+  }
+  
+  .warning-message {
+    color: red;
+  }
+  
+
+
+#week{
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap:inherit;
+}  
+
+.day{
+  margin: 10px;
+  background-color: white;
+  padding: 20px 10px;
+  width: 50%;
+  border: solid thin;
+  border-radius: 10px;
+}
+
+.day-header{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.student-print{
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #e0f7fa;
+  box-sizing: border-box;
+}
+
+#week > *{
+  background-color: white;
+}
+
+#week > :first-child{
+  background-color: white;
+}
+
+#MonitorForm{
+  width: 60%;
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+.monitorFormOption{
+  display: flex;
+
+  background-color: #e0f7fa;
+  margin: 20px;
+  padding: 10px;
+
+  border-radius: 5px;
+
+  justify-content: left;
+}
+
+.monitorFormOption div{
+  width: 80%;
+}
+
+.monitorFormOption input{
+  transform: scale(1.5);
+}
+
+#mainContainer{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.pageSwitch{
+  font-size: xx-large;
+  cursor: pointer;
+}
+
+.checkbox{
+  cursor: pointer;
+}
+
+#monitorList{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.monitorInstance{
+  display: flex;
+  flex-direction: column;
+  line-height: 200%;
+  width: 12%;
+}
+
+#gradeList{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.gradeInstance{
+  width: 15%;
+}
+
+.removeButton{
+  font-size: xx-large;
+  color: red;
+  cursor: pointer;
+}
+
+.subtitle{
+  font-size: large;
+  font-weight: normal;
+}

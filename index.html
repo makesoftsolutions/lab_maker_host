@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>Sistema de Monitores</title>
+</head>
+
+<body>
+  <h1 id="pageHeader">Cadastro de Estudantes</h1>
+  <div class="container" id="mainContainer">
+
+    <div id="switchBack" class="pageSwitch" onclick="switchToGrade()">
+      <
+    </div>
+
+    <form id="studentForm">
+      <label for="name">Nome:</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="date">Data:</label>
+      <input type="date" id="date" name="date" required onchange="updateSelect()">
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById('date').min = getCurrentDate();
+        });
+      </script>
+     
+     <label for="gradeReference">Horário:</label>
+     <select id="gradeReference" name="gradeReference" required disabled>
+      <option value="-1" disabled selected>Selecione o horário</option>
+     </select>
+
+      <button type="button"
+        onclick="addStudent(); showPopup(salvaStudents[salvaStudents.length - 1], salvaStudents.length - 1)">Cadastrar</button>
+
+    </form>
+
+    <form id="gradeForm" style="display: none;">
+      <label for="name">Descrição:</label><div id="nextGrade" style="display: none;"></div>
+      <input type="text" id="description" name="description" placeholder="Ex: seg - 07:00 - 08:00" required>
+
+      <button type="button"
+        onclick="addToGrade()">Cadastrar</button>
+
+    </form>
+
+
+    <form id="monitorForm" style="display: none;">
+      <label for="name">Nome:</label>
+      <input type="text" id="nameMonitor" name="nameMonitor" required>
+      <div id="newMonitorGrade"></div>
+    
+      <button type="button"
+        onclick="addMonitor()">Cadastrar</button>
+    
+    </form>
+
+    <div id="switchFoward" class="pageSwitch" onclick="switchToMonitors()">
+      >
+    </div>
+
+  </div>
+
+  <div class="list-display" id="students-display">
+    <h1>Horários da semana:<p class="subtitle">Aperte Shift para editar</p></h1>
+    <div class="container" id="week"></div>
+  </div>
+
+  <div class="list-display" id="monitors-display" style="display: none;">
+    <h1>Monitores cadastrados:<p class="subtitle">Aperte Shift para editar</p></h1>
+    <div id="monitorList" class="list-container"></div>
+  </div>
+
+  <div class="list-display" id="gradeDisplay" style="display: none;">
+    <h1>Grade Atual<p class="subtitle">Aperte Shift para editar</p></h1>
+    <div id="gradeList" class="list-container"></div>
+  </div>
+
+  <div id="popup" class="popup">
+    <div id="popup-content" class="popup-content"></div>
+  </div>
+
+  <script src="api.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="listagens.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
