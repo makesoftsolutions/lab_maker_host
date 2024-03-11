@@ -30,12 +30,12 @@
       </script>
      
      <label for="gradeReference">Horário:</label>
-     <select id="gradeReference" name="gradeReference" required disabled>
-      <option value="-1" disabled selected>Selecione o horário</option>
+     <select id="gradeReference" name="gradeReference" required disabled multiple>
+      <option value="-1" disabled selected>Selecione o(s) horário(s)</option>
      </select>
 
       <button type="button"
-        onclick="addStudent(); showPopup(salvaStudents[salvaStudents.length - 1], salvaStudents.length - 1)">Cadastrar</button>
+        onclick="addStudent(); showPopup()">Cadastrar</button>
 
     </form>
 

@@ -173,13 +173,13 @@ fetch(getUrl() + "/grades", {
 
     data.forEach((grade) => {
       const gradeItem = document.createElement("div");
-      gradeItem.innerHTML = `<div class="removeButton" style="display: none;"onclick="removeGrade(${grade._id})">X</div>${grade.description} (${grade._id})`;
+      gradeItem.innerHTML = `<div class="removeButton" style="display: none;"onclick="removeGrade(${grade._id})">X</div>${grade.description}`;
       gradeItem.classList.add("gradeInstance")
       gradesListDiv.appendChild(gradeItem);
 
       const option = document.createElement("option");
       option.value = grade._id;
-      option.text = `${grade.description} (${grade._id})`;
+      option.text = `${grade.description}`;
       gradeDropdown.appendChild(option);
 
       const checkbox = document.createElement("input");
