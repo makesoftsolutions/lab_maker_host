@@ -15,7 +15,7 @@ let salvaStudents = []
 function addStudent() {
   const name = document.getElementById('name').value;
   const rawDate = document.getElementById('date').value;
-  const gradeReference = Array.from(document.getElementById('gradeReference').selectedOptions, option => option.value);
+  const gradeReference = document.getElementById('gradeReference').value.split(',');
 
   if (!rawDate || isNaN(new Date(rawDate))) {
     alert('Data inválida!');
@@ -23,65 +23,36 @@ function addStudent() {
   }
 
   const formattedDate = new Date(rawDate).toISOString();
-
-  gradeReference.forEach(grade => {
-    if (grade != -1){
-      const studentData = {
-          name,
-          date: [formattedDate],
-          gradeReference: [grade]
-      }; 
-      salvaStudents.push(studentData);
-    }
-  });
+  const studentData = {
+      name,
+      date: [formattedDate],
+      gradeReference: gradeReference.map(reference => Number(reference.trim()))
+  }; 
+  salvaStudents.push(studentData);
+  
 }
 
-
 function addToGrade(){
-  const description = document.getElementById("description").value;
-  const regex = /^(seg|ter|qua|qui|sex)\s-\s(\d{2}:\d{2})\s-\s(\d{2}:\d{2})$/;
+  const description = document.getElementById("description").value
+  const regex = /^(seg|ter|qua|qui|sex)\s-\s\d{2}:\d{2}\s-\s\d{2}:\d{2}$/;
+
 
   if (document.getElementById("nextGrade").value == null){
-    document.getElementById("nextGrade").value = 1;
+    document.getElementById("nextGrade").value = 1
   }
 
   if (regex.test(description)){
-    const match = description.match(regex);
-    const day = match[1];
-    const startTime = match[2];
-    const endTime = match[3];
-
-    const startHour = parseInt(startTime.split(":")[0]);
-    const endHour = parseInt(endTime.split(":")[0]);
-
-    if (endHour > startHour + 1) {
-
-      for (let i = startHour; i < endHour; i++) {
-
-        const newStartTime = `${i < 10 ? '0' : ''}${i}:00`;
-        const newEndTime = `${i + 1 < 10 ? '0' : ''}${i + 1}:00`;
-        const newDescription = `${day} - ${newStartTime} - ${newEndTime}`;
-        const grade = [{
-          "_id": Number(document.getElementById("nextGrade").value) + i - startHour,
-          "description": newDescription
-        }];
-
-        submitForm({"Grade": grade},'grades');
-      }
-      
-    } else {
-      const grade = [{
-        "_id": Number(document.getElementById("nextGrade").value),
-        "description": description
-      }];
-      submitForm({"Grade": grade},'grades');
-    }
+    const grade = [{
+      "_id": Number(document.getElementById("nextGrade").value),
+      "description": description
+    }]
+    submitForm({"Grade":grade},'grades')
     localStorage.setItem('form', 'grade');
-  } else {
-    alert("A entrada está em um formato inválido. Siga o exemplo: seg - 07:00 - 08:00");
+  }
+  else{
+    alert("A entrada está em um formato inválido. Siga o exemplo: seg - 07:00 - 08:00")
   }
 }
-
 
 async function addMonitor() {
   const name = document.getElementById('nameMonitor').value;
@@ -103,32 +74,16 @@ async function addMonitor() {
   localStorage.setItem('form', 'monitor');
 }
 
-function showPopup() {
+function showPopup(studentData, index) {
   const popupContent = document.getElementById('popup-content');
   popupContent.innerHTML = `
-  <p>  
-  Para manter o controle da limpeza, organização e orientação dos alunos, é necessário limitar o número de pessoas
-  dentro do laboratório.
-  <strong>REGRAS:</strong>
-  <ol>
-    <li>Não é permitido marcar horário para estudo, laboratório não é lugar para estudar, é local de fazer projetos.</li>
-    <li>Poderá ser marcado no mesmo horário um máximo de 8 pessoas, de acordo com o número de cadeiras.</li>
-    <li>Os horários disponíveis são de acordo com a disponibilidade dos monitores.</li>
-    <li>Cada marcação terá duração de uma hora, portanto, se atente em marcar mais horários caso queira ficar um tempo maior.</li>
-    <li>É necessário que cada pessoa marque individualmente, para que não extrapole o limite de pessoas no laboratório.</li>
-    <li>O aluno que abusar do horários de marcação, por exemplo marcar inúmeros horários desnecessariamente ou marcar
-      horário para ficar ocioso no laboratório, estará sujeito a punição de restrição temporária.</li>
-    <li>É imprescindível seguir as orientações do monitores, casos de desrespeito serão punidos perante as regras do
-      campus.</li>
-    <li>Todos os materiais utilizados deverão ser guardados no local que estavam, caso esteja fora, peça auxílio a algum
-      monitor.</li>
-  </ol>
-</p>
-  <div>
-    <input class="popUpInput" id="terms" type="checkbox"><p id="termsText">Li e aceito os termos</p></input>
-  </div>
-    <button class="popUpInput" onclick="cadastrarStudent()">Cadastrar</button>
-  <button class="popUpInput" type="button" onclick="closePopup()">Fechar</button>
+      <strong>Nome:</strong> ${studentData.name} - 
+      <strong>Data:</strong> ${studentData.date} - 
+      <strong>Referências de Grade:</strong> ${studentData.gradeReference.join(', ')}
+      <p class="warning-message">Após cadastrar, não será mais possível editar ou excluir.</p>
+      <button onclick="removeStudentVetor(${index})">Remover </button>
+      <button onclick="cadastrarStudent()">Cadastrar</button>
+      <button type="button" onclick="closePopup()">Fechar</button>
   `;
 
   const popup = document.getElementById('popup');
@@ -136,12 +91,12 @@ function showPopup() {
 }
 
 async function cadastrarStudent() {
-
-  salvaStudents.forEach(grade => {
-    submitForm(grade,'students');
-  })
+  const latestStudentIndex = salvaStudents.length - 1;
+  const latestStudentData = salvaStudents[latestStudentIndex];
+  await submitForm(latestStudentData,'students');
   closePopup(); 
   localStorage.setItem('form', 'student');
+  window.location.reload()
 }
 
 function removeStudentVetor(index) {
