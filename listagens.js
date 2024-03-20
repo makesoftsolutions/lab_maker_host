@@ -1,8 +1,8 @@
 function load_monitors(grade) {
-  fetch( getUrl() + "/monitors", {
-    headers:{
-      'ngrok-skip-browser-warning': 'true'
-    }
+  fetch(getUrl() + "/monitors", {
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
   })
     .then((response) => response.json())
     .then((data) => {
@@ -11,9 +11,8 @@ function load_monitors(grade) {
       monitorListDiv.innerHTML = "";
 
       data.forEach((monitor) => {
-
-        var studentGradeDescription =""
-        monitor.gradeReference.forEach(gradeReference =>{
+        var studentGradeDescription = "";
+        monitor.gradeReference.forEach((gradeReference) => {
           const studentGradeId = gradeReference;
           const foundGrade = grade.find(
             (gradeItem) => gradeItem._id === studentGradeId
@@ -25,13 +24,17 @@ function load_monitors(grade) {
             console.warn(`Grade com _id ${studentGradeId} não encontrado.`);
           }
 
-          studentGradeDescription += "<br>"
-        })
+          studentGradeDescription += "<br>";
+        });
         const monitorItem = document.createElement("div");
         monitorItem.classList.add("monitorInstance");
-        monitorItem.innerHTML = `<div class="removeButton" style="display: none;"onclick="removeMonitor('${monitor._id}')">X</div><strong>${
-          monitor.name
-        }</strong><br>${studentGradeDescription}`;
+        let displayStatus = "Ativo"
+
+        if (monitor.status === "suspended"){
+          displayStatus = "Suspenso"
+        }
+
+        monitorItem.innerHTML = `<div class="removeButton" style="display: none;"onclick="removeMonitor('${monitor._id}')">X</div><div onclick="toggleMonitorStatus('${monitor._id}', '${monitor.status}')">${displayStatus}</div><strong>${monitor.name}</strong><br>${studentGradeDescription}`;
         monitorListDiv.appendChild(monitorItem);
       });
     })
@@ -42,11 +45,13 @@ function load_monitors(grade) {
 
 function sortGrade(str1, str2) {
   const extrairDados = (str) => {
-    const match = str.match(/^(seg|ter|qua|qui|sex)\s-\s(\d{2}:\d{2})\s-\s\d{2}:\d{2}$/);
+    const match = str.match(
+      /^(seg|ter|qua|qui|sex)\s-\s(\d{2}:\d{2})\s-\s\d{2}:\d{2}$/
+    );
     if (match) {
       return {
         dia: match[1],
-        horarioInicio: match[2]
+        horarioInicio: match[2],
       };
     }
     return null;
@@ -59,7 +64,7 @@ function sortGrade(str1, str2) {
     return 0;
   }
   if (dados1.dia !== dados2.dia) {
-    const dias = ['seg', 'ter', 'qua', 'qui', 'sex'];
+    const dias = ["seg", "ter", "qua", "qui", "sex"];
     return dias.indexOf(dados1.dia) - dias.indexOf(dados2.dia);
   } else {
     return dados1.horarioInicio.localeCompare(dados2.horarioInicio);
@@ -68,9 +73,9 @@ function sortGrade(str1, str2) {
 
 function load_students(grade) {
   fetch(getUrl() + "/students", {
-    headers:{
-      'ngrok-skip-browser-warning': 'true'
-    }
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
   })
     .then((response) => response.json())
     .then((data) => {
@@ -88,10 +93,14 @@ function load_students(grade) {
         const dateB = new Date(b.date[0]).getTime();
 
         if (dateA === dateB) {
-          const gradeIdA = a.gradeReference[0];                   // Se os dias são iguais, ordenar por horário
+          const gradeIdA = a.gradeReference[0]; // Se os dias são iguais, ordenar por horário
           const gradeIdB = b.gradeReference[0];
-          const timeA = grade.find((gradeItem) => gradeItem._id === gradeIdA).description;
-          const timeB = grade.find((gradeItem) => gradeItem._id === gradeIdB).description;
+          const timeA = grade.find(
+            (gradeItem) => gradeItem._id === gradeIdA
+          ).description;
+          const timeB = grade.find(
+            (gradeItem) => gradeItem._id === gradeIdB
+          ).description;
 
           return timeA.localeCompare(timeB);
         }
@@ -112,7 +121,8 @@ function load_students(grade) {
           if (
             studentReference.getDay() == days.indexOf(day) &&
             studentReference.getTime() < week &&
-            studentReference.getTime() >= new Date().getTime() - 24*60*60*1000
+            studentReference.getTime() >=
+              new Date().getTime() - 24 * 60 * 60 * 1000
           ) {
             const studentItem = document.createElement("div");
             studentItem.innerHTML = `<div class=\"student-print\"><div class="removeButton" style="display: none;"onclick="removeStudent('${student._id}')">X</div><strong>Nome:</strong> ${student.name}<br> <strong>Horário:</strong> ${studentGradeDescription}</div>`;
@@ -150,57 +160,72 @@ function updateSelect() {
   });
 }
 
-function load_grade(){
+function load_grade() {
+  const gradesListDiv = document.getElementById("gradeList");
+  const gradeDropdown = document.getElementById("gradeReference");
+  const newMonitorGrade = document.getElementById("newMonitorGrade");
 
-fetch(getUrl() + "/grades", {
-  headers:{
-    'ngrok-skip-browser-warning': 'true'
+  function addOptionToDropdown(grade) {
+    const option = document.createElement("option");
+    option.value = grade._id;
+    option.text = grade.description;
+    option.style.display = "none"
+    gradeDropdown.appendChild(option);
   }
-})
-  .then((response) => response.json())
-  .then((data) => {
-    const gradesListDiv = document.getElementById('gradeList');
-    const gradeDropdown = document.getElementById("gradeReference");
-    const newMonitorGrade = document.getElementById("newMonitorGrade");
 
-    gradesListDiv.innerHTML = "";
-
-    data = data.sort((a,b) => a._id - b._id)
-
-    document.getElementById("nextGrade").value = String(Number(data[data.length - 1]._id) + 1);
-
-    data = data.sort((a,b) => sortGrade(a.description,b.description))
-
-    data.forEach((grade) => {
-      const gradeItem = document.createElement("div");
-      gradeItem.innerHTML = `<div class="removeButton" style="display: none;"onclick="removeGrade(${grade._id})">X</div>${grade.description}`;
-      gradeItem.classList.add("gradeInstance")
-      gradesListDiv.appendChild(gradeItem);
-
-      const option = document.createElement("option");
-      option.value = grade._id;
-      option.text = `${grade.description}`;
-      gradeDropdown.appendChild(option);
-
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.classList.add("checkbox");
-      checkbox.value = grade._id;
-
-      const label = document.createElement("div");
-      label.innerText = grade.description;
-
-      const monitorGrade = document.createElement("div");
-      monitorGrade.appendChild(label);
-      monitorGrade.appendChild(checkbox);
-      monitorGrade.classList.add("monitorFormOption");
-
-      newMonitorGrade.appendChild(monitorGrade);
-    });
-    load_students(data);
-    load_monitors(data)
+  fetch(getUrl() + "/grades", {
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
   })
-  .catch((error) => {
-    console.error("Erro ao obter as grade disponíveis:", error);
-  });
+    .then((response) => response.json())
+    .then((data) => {
+      gradesListDiv.innerHTML = "";
+      data.sort((a, b) => a._id - b._id);
+      data.forEach((grade) => {
+        const gradeItem = document.createElement("div");
+        gradeItem.innerHTML = `<div class="removeButton" style="display: none;" onclick="removeGrade(${grade._id})">X</div>${grade.description}`;
+        gradeItem.classList.add("gradeInstance");
+        gradesListDiv.appendChild(gradeItem);
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.classList.add("checkbox");
+        checkbox.value = grade._id;
+
+        const label = document.createElement("div");
+        label.innerText = grade.description;
+
+        const monitorGrade = document.createElement("div");
+        monitorGrade.appendChild(label);
+        monitorGrade.appendChild(checkbox);
+        monitorGrade.classList.add("monitorFormOption");
+
+        newMonitorGrade.appendChild(monitorGrade);
+      });
+
+      load_students(data);
+      load_monitors(data);
+    })
+    .catch((error) => {
+      console.error("Erro ao obter as grades disponíveis:", error);
+    });
+
+  fetch(getUrl() + "/filteredGrades", {
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      gradeDropdown.innerHTML = "";
+
+      data.forEach((grade) => {
+        addOptionToDropdown(grade);
+      });
+    })
+    .catch((error) => {
+      console.error("Erro ao obter as grades filtradas:", error);
+    });
 }
+

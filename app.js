@@ -292,6 +292,16 @@ window.onload = ()=>{
   getNextDayOfWeek(3, 'wednesday');
   getNextDayOfWeek(4, 'thursday');
   getNextDayOfWeek(5, 'friday');
+
+  const currentDate = new Date();
+  const minDate = currentDate.toISOString().split('T')[0];
+
+  const maxDate = new Date(currentDate);
+  maxDate.setDate(maxDate.getDate() + 14);
+  const maxDateString = maxDate.toISOString().split('T')[0];
+
+  document.getElementById('date').setAttribute('min', minDate);
+  document.getElementById('date').setAttribute('max', maxDateString);
 }
 
 window.addEventListener('keydown', function(event) {
@@ -330,6 +340,29 @@ function removeMonitor(id){
 
   const apiUrl = getUrl() + '/monitorsRemove';
   const data = {"_id":id}
+
+  axios.post(apiUrl, data)
+      .then(response => {
+          alert(response.data.message);
+          localStorage.setItem('form', 'monitor');
+          window.location.reload()
+      })
+      .catch(error => {
+          alert('Erro ao remover: ' + error.response.data.error);
+      });
+}
+
+function toggleMonitorStatus(id, status){
+
+  let apiUrl = ""
+  if (status === "active"){
+    apiUrl = getUrl() + '/suspendMonitors';
+  }
+  else{
+    apiUrl = getUrl() + '/activateMonitors';
+  }
+
+  const data = {"_id": id}
 
   axios.post(apiUrl, data)
       .then(response => {
